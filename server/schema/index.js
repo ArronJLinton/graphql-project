@@ -5,7 +5,7 @@ const {
     GraphQLString, 
     GraphQLInt, 
     GraphQLSchema, 
-    GraphQLScalarType
+    GraphQLList
 } = require('graphql');
 
 const userData = [
@@ -16,20 +16,20 @@ const userData = [
 ];
 
 const hobbyData =  [
-    {id: '1', title: 'Programming', description: 'Using computers to make the world a better place.'},
-    {id: '2', title: 'Soccer', description: 'It\'s a beautiful game'},
-    {id: '3', title: 'Reading', description: 'Knowledge is power.'},
-    {id: '4', title: 'Life', description: 'Nothing better than enjoying yourself.'},
-    {id: '5', title: 'Music', description: 'The healing force of the world.'}
-]
+    {id: '1', title: 'Programming', description: 'Using computers to make the world a better place.', userId: '1'},
+    {id: '2', title: 'Soccer', description: 'It\'s a beautiful game', userId: '1'},
+    {id: '3', title: 'Reading', description: 'Knowledge is power.', userId: '2'},
+    {id: '4', title: 'Life', description: 'Nothing better than enjoying yourself.', userId: '3'},
+    {id: '5', title: 'Music', description: 'The healing force of the world.', userId: '3'}
+];
 
 const postData = [
     {id: '1', comment: 'Building a Mind', userId: '1'},
     {id: '2', comment: 'GraphQL is Amazing', userId: '1'},
-    {id: '3', comment: 'How to Change the World', userId: '19'},
-    {id: '4', comment: 'How to Change the World', userId: '211'},
-    {id: '5', comment: 'How to Change the World', userId: '1'}
-]
+    {id: '3', comment: 'How to Change the World', userId: '2'},
+    {id: '4', comment: 'How to Change the World', userId: '2'},
+    {id: '5', comment: 'How to Change the World', userId: '3'}
+];
 
 // Create types
 const UserType = new GraphQLObjectType({
@@ -41,7 +41,22 @@ const UserType = new GraphQLObjectType({
         id: {type: GraphQLID},
         name: {type: GraphQLString},
         age: {type: GraphQLInt},
-        city: {type: GraphQLString}
+        city: {type: GraphQLString},
+        posts: {
+            // GraphQLList -> creates an array of posts
+            type: GraphQLList(PostType),
+            resolve(parent, args) {
+                // use lodash .filter() method to return all post objects that contain userId equal to parent.id
+                // will be return as an array
+                return _.filter(postData, {userId: parent.id})
+            }
+        },
+        hobbies: {
+            type: GraphQLList(HobbyType),
+            resolve(parent, args) {
+                return _.filter(hobbyData, {userId: parent.id})
+            }
+        }
     })
 });
 
@@ -51,7 +66,13 @@ const HobbyType = new GraphQLObjectType({
     fields: () => ({
         id: {type: GraphQLID},
         title: {type: GraphQLString},
-        description: {type: GraphQLString}
+        description: {type: GraphQLString},
+        user: {
+            type: UserType,
+            resolve(parent, args){
+                return _.find(userData, {id: parent.userId})
+            }
+        }
     })
 });
 
@@ -61,6 +82,12 @@ const PostType = new GraphQLObjectType({
     fields: () => ({
         id: {type: GraphQLID},
         comment: {type: GraphQLString},
+        user: {
+            type: UserType,
+            resolve(parent, args){
+                return _.find(userData, {id: parent.userId})
+            }
+        }
     })
 });
 
@@ -96,6 +123,12 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args) {
                 // return data for our hobby
                 return _.find(postData, {id:args.id})
+            }
+        },
+        users: {
+            type: GraphQLList(UserType),
+            resolve(parent, args) {
+                return userData
             }
         }
     }
