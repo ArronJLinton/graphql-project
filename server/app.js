@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const app = express();
 const { graphqlHTTP } = require('express-graphql');
@@ -9,7 +10,7 @@ const mongoose = require('mongoose');
   mongodb://gq-admin:Rut2-17@ds031947.mlab.com:31947/gq-project
 
 */
-mongoose.connect('mongodb://gq-admin:Rut2-17@ds031947.mlab.com:31947/gq-project', { useUnifiedTopology: true , useNewUrlParser: true });
+mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@ds031947.mlab.com:31947/gq-project`, { useUnifiedTopology: true , useNewUrlParser: true });
 mongoose.connection.once('open', () => {
   console.log('Yes! Connected!')
 });

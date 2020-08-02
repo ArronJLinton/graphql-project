@@ -51,6 +51,7 @@ const UserType = new GraphQLObjectType({
                 // will be return as an array
                 // return _.filter(postData, {userId: parent.id})
                 // return db.User.find()
+                
             }
         },
         hobbies: {
@@ -110,13 +111,13 @@ const RootQuery = new GraphQLObjectType({
                 // return _.find(userData, {id: args.id})
                 // we resolve with data
                 // get and return data from a datasource
-                return User.find({id: args.id})
+                return User.findById(args.id)
             }
         },
         users: {
             type: GraphQLList(UserType),
             resolve(parent, args) {
-                return User.find()
+                return User.find();
             }
         },
         hobby: {
