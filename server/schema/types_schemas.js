@@ -1,5 +1,4 @@
 const graphql = require('graphql');
-
 const { 
     GraphQLObjectType,
     GraphQLNonNull,
@@ -57,4 +56,4 @@ const RootQuery = new GraphQLObjectType({
 
 module.exports = {
     query: RootQuery
-}
+};
