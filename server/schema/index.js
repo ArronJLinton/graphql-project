@@ -51,14 +51,15 @@ const UserType = new GraphQLObjectType({
                 // will be return as an array
                 // return _.filter(postData, {userId: parent.id})
                 // return db.User.find()
-                
+                return Post.find({userId: parent.id})
             }
         },
         hobbies: {
             type: GraphQLList(HobbyType),
             resolve(parent, args) {
                 // return _.filter(hobbyData, {userId: parent.id})
-                // return User.find({ id: args.userId}).populate('hobbies')
+                return Hobby.find({userId: parent.id})
+                
             }
         }
     })
@@ -75,6 +76,7 @@ const HobbyType = new GraphQLObjectType({
             type: UserType,
             resolve(parent, args){
                 // return _.find(userData, {id: parent.userId})
+                return User.findById(parent.userId)
             }
         }
     })
@@ -90,6 +92,7 @@ const PostType = new GraphQLObjectType({
             type: UserType,
             resolve(parent, args){
                 // return _.find(userData, {id: parent.userId})
+                return User.findById(parent.userId)
             }
         }
     })
@@ -126,6 +129,7 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args) {
                 // return data for our hobby
                 // return _.find(hobbyData, {id:args.id})
+                return Hobby.findById(args.id)
             }
         },
         hobbies: {
@@ -140,6 +144,7 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args) {
                 // return data for our hobby
                 // return _.find(postData, {id:args.id})
+                return Post.findById(args.id)
             }
         },
         posts: {
