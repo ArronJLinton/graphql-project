@@ -3,15 +3,22 @@ const app = express();
 const { graphqlHTTP } = require('express-graphql');
 const schema = require('./schema');
 const testSchema = require('./schema/types_schemas');
-
+const mongoose = require('mongoose');
 /*
 
   mongodb://gq-admin:Rut2-17@ds031947.mlab.com:31947/gq-project
 
-  
 */
+mongoose.connect('mongodb://gq-admin:Rut2-17@ds031947.mlab.com:31947/gq-project', { useUnifiedTopology: true , useNewUrlParser: true });
+mongoose.connection.once('open', () => {
+  console.log('Yes! Connected!')
+});
+mongoose.connection.once('error', (err) => {
+  console.log('ERROR: ', err);
+});
+
 app.use('/graphql', graphqlHTTP({
-  schema: testSchema,
+  schema,
   // enables the graphiql interface for running queries (similar to postman)
   graphiql: true,
 }));
